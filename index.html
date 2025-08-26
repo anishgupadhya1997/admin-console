@@ -177,6 +177,9 @@
                             <button id="csvUploadBtn" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                                 <i class="fas fa-upload mr-2"></i>Upload CSV
                             </button>
+                            <button id="downloadTemplateBtn" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition flex items-center">
+                                <i class="fas fa-download mr-2"></i>Download Template
+                            </button>
                         </div>
                     </div>
 
@@ -281,6 +284,7 @@
                             <option value="quiz">Quiz Questions</option>
                             <option value="interview">Interview Questions</option>
                         </select>
+                        <p class="text-sm text-gray-600 mt-1">Select the type of questions in your CSV file</p>
                     </div>
                     
                     <div id="csvPreview" class="mb-6 hidden">
@@ -392,6 +396,45 @@
             </div>
         </div>
     </div>
+
+    <!-- CSV Template Download Functions -->
+    <script>
+        // Add template download functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+            if (downloadTemplateBtn) {
+                downloadTemplateBtn.addEventListener('click', downloadCsvTemplate);
+            }
+        });
+
+        function downloadCsvTemplate() {
+            const questionType = document.getElementById('questionTypeSelect')?.value || 'quiz';
+            
+            let csvContent = '';
+            
+            if (questionType === 'quiz') {
+                csvContent = `question,option1,option2,option3,option4,correctAnswer,explanation,category,difficulty,tags
+"What is the primary function of a SIEM system?","Collect and analyze security events","Encrypt network traffic","Perform vulnerability scans","Create firewalls","Collect and analyze security events","SIEM systems centralize security monitoring and analysis","SECURITY_OPERATIONS","INTERMEDIATE","siem,soc,monitoring"
+"What defines the shared responsibility model in cloud security?","Security responsibilities between provider and customer","Cost sharing agreements","Data sharing between organizations","Network bandwidth allocation","Security responsibilities between provider and customer","Model divides security duties between cloud provider and customer","CLOUD_SECURITY","INTERMEDIATE","cloud,shared responsibility,aws"
+"What is the purpose of network segmentation?","Isolate traffic and limit attack spread","Increase network speed","Reduce hardware costs","Simplify management","Isolate traffic and limit attack spread","Segmentation prevents lateral movement and contains breaches","NETWORK_SECURITY","INTERMEDIATE","segmentation,isolation,vlans"`;
+            } else {
+                csvContent = `question,answer,category,experienceLevel,tags
+"What are the key responsibilities of a SOC analyst?","A SOC analyst monitors security events, investigates alerts, responds to incidents, and maintains security documentation. Key responsibilities include continuous monitoring, alert triage, incident response, and threat hunting.","SECURITY_OPERATIONS","ENTRY","soc,monitoring,incident response"
+"Explain the shared responsibility model in cloud security","The shared responsibility model divides security duties between cloud provider and customer. The provider secures the infrastructure while customers secure their data, applications, and access management.","CLOUD_SECURITY","INTERMEDIATE","cloud,shared responsibility,aws"
+"How would you design a secure network architecture?","A secure network architecture includes network segmentation, defense in depth, zero trust principles, proper firewall configuration, intrusion detection systems, and regular security assessments.","NETWORK_SECURITY","SENIOR","network,architecture,security design"`;
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${questionType}_questions_template.csv`;
+            link.click();
+            
+            if (window.showNotification) {
+                window.showNotification(`${questionType} template downloaded successfully!`, 'success');
+            }
+        }
+    </script>
 
     <!-- Firebase SDK -->
     <script type="module" src="firebase-config.js"></script>
