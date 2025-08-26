@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberLearn Questions API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .api-info { background: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .endpoint { background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .json-output { background: #f8f8f8; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>🔐 CyberLearn Questions API</h1>
+    
+    <div class="api-info">
+        <h2>API Endpoints</h2>
+        <div class="endpoint">
+            <strong>📱 Questions Data:</strong> <code>/api/questions.html</code>
+        </div>
+        <div class="endpoint">
+            <strong>📊 Firestore Data:</strong> <code>https://cyberaccend.web.app/api_data/questions</code>
+        </div>
+        <div class="endpoint">
+            <strong>🔄 Real-time Updates:</strong> Data updates automatically when you modify questions in the admin console
+        </div>
+        <div class="endpoint">
+            <strong>🗂️ Flashcard Sync:</strong> Flashcard decks and cards are now included in the API response
+        </div>
+    </div>
+
+    <h2>Current Questions Data</h2>
+    <div class="json-output">
+        <pre id="questionsData">Loading...</pre>
+    </div>
+
+    <h2>How to Use in Android App</h2>
+    <div class="api-info">
+        <h3>Option 1: Fetch from this page</h3>
+        <code>
+            val url = "https://cyberaccend.web.app/api/questions.html"<br>
+            // Parse the HTML and extract JSON from the pre tag
+        </code>
+        
+        <h3>Option 2: Use Firestore directly (Recommended)</h3>
+        <code>
+            // Use Firebase SDK in your Android app<br>
+            db.collection("api_data").document("questions")<br>
+            .addSnapshotListener { snapshot, e -><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;// Questions update in real-time<br>
+            }
+        </code>
+    </div>
+
+    <script>
+        // Load the main app scripts to get access to questions data
+        function loadQuestionsData() {
+            // Check if questions data is available
+            if (window.currentQuestions && window.currentInterviewQuestions && window.currentFlashcardDecks && window.currentFlashcards) {
+                const data = {
+                    quiz_questions: window.currentQuestions,
+                    interview_questions: window.currentInterviewQuestions,
+                    flashcard_decks: window.currentFlashcardDecks,
+                    flashcards: window.currentFlashcards,
+                    last_updated: new Date().toISOString(),
+                    total_quiz_questions: window.currentQuestions.length,
+                    total_interview_questions: window.currentInterviewQuestions.length,
+                    total_flashcard_decks: window.currentFlashcardDecks.length,
+                    total_flashcards: window.currentFlashcards.length
+                };
+                
+                document.getElementById('questionsData').textContent = JSON.stringify(data, null, 2);
+            } else {
+                // Fallback to sample data
+                const sampleData = {
+                    quiz_questions: [
+                        {
+                            "id": "demo_1",
+                            "question": "What is the primary function of a SIEM system?",
+                            "options": [
+                                "To collect, analyze, and correlate security events from multiple sources",
+                                "To encrypt network traffic",
+                                "To perform vulnerability scans",
+                                "To create network firewalls"
+                            ],
+                            "correctAnswer": "To collect, analyze, and correlate security events from multiple sources",
+                            "explanation": "SIEM systems are essential in Security Operations Centers (SOCs) for centralizing log data, detecting threats, and providing real-time analysis of security alerts.",
+                            "category": "SECURITY_OPERATIONS",
+                            "difficulty": "INTERMEDIATE",
+                            "tags": ["siem", "soc", "monitoring", "correlation"],
+                            "isActive": true
+                        }
+                    ],
+                    interview_questions: [
+                        {
+                            "id": "interview_1",
+                            "question": "What are the key responsibilities of a SOC analyst and how do you prioritize security alerts?",
+                            "answer": "A SOC analyst is responsible for monitoring security events, investigating alerts, and responding to incidents. Key responsibilities include: 1) Continuous monitoring of SIEM dashboards and security tools, 2) Analyzing and triaging security alerts based on severity and impact, 3) Conducting initial incident response and escalation procedures, 4) Documenting findings and maintaining incident records, 5) Threat hunting and proactive security monitoring. Alert prioritization follows a risk-based approach considering factors like asset criticality, threat severity, business impact, and regulatory requirements. Critical alerts affecting core business systems take precedence over low-severity alerts on non-critical assets.",
+                            "keyPoints": [
+                                "24/7 security monitoring and alert analysis",
+                                "Risk-based alert prioritization and triage",
+                                "Incident response and escalation procedures",
+                                "Threat hunting and proactive monitoring",
+                                "Documentation and knowledge management"
+                            ],
+                            "category": "SECURITY_OPERATIONS",
+                            "experienceLevel": "ENTRY",
+                            "tags": ["soc", "monitoring", "incident response", "alert triage"],
+                            "isActive": true
+                        }
+                    ],
+                    flashcard_decks: [
+                        {
+                            "id": "deck_1",
+                            "name": "Network Security Fundamentals",
+                            "description": "Essential concepts and terminology in network security",
+                            "category": "NETWORK_SECURITY",
+                            "difficulty": "BEGINNER",
+                            "color": "#2196F3",
+                            "tags": ["network", "firewall", "security", "basics"],
+                            "estimatedStudyTime": 30,
+                            "createdAt": new Date().toISOString(),
+                            "updatedAt": new Date().toISOString()
+                        }
+                    ],
+                    flashcards: [
+                        {
+                            "id": "card_1",
+                            "deckId": "deck_1",
+                            "front": "What is a firewall?",
+                            "back": "A network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules.",
+                            "explanation": "Firewalls act as a barrier between trusted internal networks and untrusted external networks, filtering traffic to prevent unauthorized access.",
+                            "category": "NETWORK_SECURITY",
+                            "difficulty": "BEGINNER",
+                            "tags": ["firewall", "network", "security", "traffic"],
+                            "createdAt": new Date().toISOString(),
+                            "updatedAt": new Date().toISOString()
+                        }
+                    ],
+                    last_updated: new Date().toISOString(),
+                    total_quiz_questions: 1,
+                    total_interview_questions: 1,
+                    total_flashcard_decks: 1,
+                    total_flashcards: 1
+                };
+                
+                document.getElementById('questionsData').textContent = JSON.stringify(sampleData, null, 2);
+            }
+        }
+
+        // Try to load data immediately
+        loadQuestionsData();
+        
+        // Also try after a delay in case scripts are still loading
+        setTimeout(loadQuestionsData, 1000);
+        setTimeout(loadQuestionsData, 3000);
+        
+        // Update every 5 seconds
+        setInterval(loadQuestionsData, 5000);
+    </script>
+</body>
+</html>

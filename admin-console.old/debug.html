@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug User Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Debug User Analytics</h1>
+    
+    <div class="space-y-6">
+        <!-- Debug Controls -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Debug Controls</h3>
+            <div class="space-x-4">
+                <button onclick="testBasicFunctions()" class="bg-blue-600 text-white px-4 py-2 rounded">Test Basic Functions</button>
+                <button onclick="testCharts()" class="bg-green-600 text-white px-4 py-2 rounded">Test Charts</button>
+                <button onclick="testAnalytics()" class="bg-purple-600 text-white px-4 py-2 rounded">Test Analytics</button>
+                <button onclick="testExport()" class="bg-yellow-600 text-white px-4 py-2 rounded">Test Export</button>
+            </div>
+        </div>
+        
+        <!-- Debug Output -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Debug Output</h3>
+            <div id="debugOutput" class="bg-gray-50 p-4 rounded text-sm font-mono">
+                Ready for debugging...
+            </div>
+        </div>
+        
+        <!-- Test Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Performance Chart</h3>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Learning Path Chart</h3>
+                <canvas id="learningPathChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
+        <!-- Test Analytics Display -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Analytics Display</h3>
+            <div id="analyticsDisplay" class="space-y-3">
+                <!-- Analytics will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy the essential functions from app.js for testing
+        let userProfiles = [];
+        let analyticsCharts = {};
+        
+        // Sample user profiles
+        const sampleUserProfiles = [
+            {
+                userId: "user_1",
+                email: "john@example.com",
+                displayName: "John Doe",
+                isActive: true,
+                totalQuizzesTaken: 15,
+                averageQuizScore: 0.85,
+                currentStreak: 7,
+                totalStudyTime: 7200,
+                preferredCategories: ["NETWORK_SECURITY", "CRYPTOGRAPHY"]
+            },
+            {
+                userId: "user_2",
+                email: "jane@example.com",
+                displayName: "Jane Smith",
+                isActive: true,
+                totalQuizzesTaken: 22,
+                averageQuizScore: 0.92,
+                currentStreak: 14,
+                totalStudyTime: 10800,
+                preferredCategories: ["PENETRATION_TESTING", "INCIDENT_RESPONSE"]
+            },
+            {
+                userId: "user_3",
+                email: "bob@example.com",
+                displayName: "Bob Wilson",
+                isActive: false,
+                totalQuizzesTaken: 8,
+                averageQuizScore: 0.65,
+                currentStreak: 0,
+                totalStudyTime: 3600,
+                preferredCategories: ["NETWORK_SECURITY"]
+            }
+        ];
+        
+        function log(message) {
+            const output = document.getElementById('debugOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function testBasicFunctions() {
+            log('🧪 Testing basic functions...');
+            
+            try {
+                // Test user profiles loading
+                userProfiles = [...sampleUserProfiles];
+                log(`✅ Loaded ${userProfiles.length} user profiles`);
+                
+                // Test basic calculations
+                const totalUsers = userProfiles.length;
+                const activeUsers = userProfiles.filter(p => p.isActive).length;
+                log(`✅ Total users: ${totalUsers}, Active users: ${activeUsers}`);
+                
+                log('✅ Basic functions test completed successfully');
+            } catch (error) {
+                log(`❌ Basic functions test failed: ${error.message}`);
+            }
+        }
+        
+        function testCharts() {
+            log('📊 Testing charts...');
+            
+            try {
+                // Test Chart.js availability
+                if (typeof Chart === 'undefined') {
+                    log('❌ Chart.js not loaded');
+                    return;
+                }
+                log('✅ Chart.js loaded successfully');
+                
+                // Test performance chart
+                const performanceCtx = document.getElementById('performanceChart');
+                if (performanceCtx) {
+                    if (analyticsCharts.performance) {
+                        analyticsCharts.performance.destroy();
+                    }
+                    
+                    analyticsCharts.performance = new Chart(performanceCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                            datasets: [{
+                                label: 'Test Data',
+                                data: [65, 78, 82, 85],
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Test Performance Chart'
+                                }
+                            }
+                        }
+                    });
+                    log('✅ Performance chart created successfully');
+                } else {
+                    log('❌ Performance chart canvas not found');
+                }
+                
+                // Test learning path chart
+                const pathCtx = document.getElementById('learningPathChart');
+                if (pathCtx) {
+                    if (analyticsCharts.learningPath) {
+                        analyticsCharts.learningPath.destroy();
+                    }
+                    
+                    analyticsCharts.learningPath = new Chart(pathCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Network Security', 'Cryptography', 'Penetration Testing', 'Incident Response'],
+                            datasets: [{
+                                data: [3, 2, 2, 1],
+                                backgroundColor: [
+                                    'rgba(59, 130, 246, 0.8)',
+                                    'rgba(16, 185, 129, 0.8)',
+                                    'rgba(245, 158, 11, 0.8)',
+                                    'rgba(239, 68, 68, 0.8)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Test Learning Path Chart'
+                                }
+                            }
+                        }
+                    });
+                    log('✅ Learning path chart created successfully');
+                } else {
+                    log('❌ Learning path chart canvas not found');
+                }
+                
+                log('✅ Charts test completed successfully');
+            } catch (error) {
+                log(`❌ Charts test failed: ${error.message}`);
+            }
+        }
+        
+        function testAnalytics() {
+            log('📈 Testing analytics calculations...');
+            
+            try {
+                if (userProfiles.length === 0) {
+                    log('❌ No user profiles loaded');
+                    return;
+                }
+                
+                // Calculate basic analytics
+                const totalUsers = userProfiles.length;
+                const activeUsers = userProfiles.filter(p => p.isActive).length;
+                const avgScore = userProfiles.reduce((sum, p) => sum + (p.averageQuizScore || 0), 0) / totalUsers;
+                const avgStreak = userProfiles.reduce((sum, p) => sum + (p.currentStreak || 0), 0) / totalUsers;
+                
+                log(`✅ Analytics calculated: Total=${totalUsers}, Active=${activeUsers}, AvgScore=${(avgScore*100).toFixed(1)}%, AvgStreak=${avgStreak.toFixed(1)}`);
+                
+                // Display analytics
+                const display = document.getElementById('analyticsDisplay');
+                display.innerHTML = `
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="p-3 bg-blue-50 rounded">
+                            <p class="font-medium">Total Users: ${totalUsers}</p>
+                        </div>
+                        <div class="p-3 bg-green-50 rounded">
+                            <p class="font-medium">Active Users: ${activeUsers}</p>
+                        </div>
+                        <div class="p-3 bg-yellow-50 rounded">
+                            <p class="font-medium">Avg Score: ${(avgScore*100).toFixed(1)}%</p>
+                        </div>
+                        <div class="p-3 bg-purple-50 rounded">
+                            <p class="font-medium">Avg Streak: ${avgStreak.toFixed(1)}</p>
+                        </div>
+                    </div>
+                `;
+                
+                log('✅ Analytics test completed successfully');
+            } catch (error) {
+                log(`❌ Analytics test failed: ${error.message}`);
+            }
+        }
+        
+        function testExport() {
+            log('📤 Testing export functionality...');
+            
+            try {
+                if (userProfiles.length === 0) {
+                    log('❌ No user profiles loaded for export');
+                    return;
+                }
+                
+                // Create CSV content
+                const csvContent = "data:text/csv;charset=utf-8,Name,Email,Score,Streak\n" +
+                    userProfiles.map(u => `${u.displayName},${u.email},${(u.averageQuizScore * 100).toFixed(1)}%,${u.currentStreak}`).join('\n');
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "debug_export.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                log('✅ Export test completed successfully - CSV downloaded');
+            } catch (error) {
+                log(`❌ Export test failed: ${error.message}`);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Debug page loaded successfully');
+            log('📋 Available test functions: testBasicFunctions(), testCharts(), testAnalytics(), testExport()');
+        });
+    </script>
+</body>
+</html>

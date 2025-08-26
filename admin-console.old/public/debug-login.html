@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Login Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 8px; max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        #log { background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 20px; font-family: monospace; white-space: pre-wrap; height: 300px; overflow-y: auto; }
+        button { padding: 10px 20px; margin: 10px 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .red { background: #dc3545; } .green { background: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Login Issue</h1>
+        <p>This page debugs the exact login process used by the main admin console.</p>
+        
+        <div class="status info">
+            <strong>Test Results from test-firebase.html:</strong><br>
+            ✅ Firebase initialized successfully<br>
+            ✅ Login successful for anishgu1997@gmail.com<br>
+            ✅ User ID: 4vJRueDaNPex54ZuPHRSa7wdaBv1<br>
+            <strong>Conclusion:</strong> Firebase authentication is working!
+        </div>
+        
+        <h3>Main Console Login Test</h3>
+        <button onclick="testMainConsoleLogin()" class="green">Test Main Console Login Function</button>
+        <button onclick="checkFirebaseConfig()" class="blue">Check Firebase Config</button>
+        <button onclick="clearCacheAndReload()" class="red">Clear Cache & Reload</button>
+        
+        <h3>Debug Log</h3>
+        <div id="log"></div>
+        
+        <p><a href="index.html">← Back to Admin Console</a></p>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function checkFirebaseConfig() {
+            log('🔍 Checking Firebase configuration...');
+            
+            if (typeof window.db !== 'undefined') {
+                log('✅ window.db is available');
+                log(`📊 Database app: ${window.db.app.name}`);
+            } else {
+                log('❌ window.db is NOT available');
+            }
+            
+            if (typeof window.auth !== 'undefined') {
+                log('✅ window.auth is available');
+                log(`🔐 Auth app: ${window.auth.app.name}`);
+            } else {
+                log('❌ window.auth is NOT available');
+            }
+            
+            if (typeof window.firebaseServices !== 'undefined') {
+                log('✅ window.firebaseServices is available');
+                log(`🛠️ Services: ${Object.keys(window.firebaseServices).join(', ')}`);
+            } else {
+                log('❌ window.firebaseServices is NOT available');
+            }
+        }
+
+        async function testMainConsoleLogin() {
+            log('🔐 Testing main console login function...');
+            
+            const email = 'anishgu1997@gmail.com';
+            const password = 'Malathi#9611';
+            
+            try {
+                // Check if Firebase services are available
+                if (!window.firebaseServices || !window.auth) {
+                    log('❌ Firebase services not available');
+                    return;
+                }
+                
+                const { signInWithEmailAndPassword } = window.firebaseServices;
+                log('✅ Firebase services found');
+                
+                // Try login
+                log(`🔐 Attempting login for: ${email}`);
+                const userCredential = await signInWithEmailAndPassword(window.auth, email, password);
+                const user = userCredential.user;
+                
+                log('✅ Login successful!');
+                log(`👤 User ID: ${user.uid}`);
+                log(`📧 Email: ${user.email}`);
+                log(`✅ Email verified: ${user.emailVerified}`);
+                
+                // Test what the main console should do
+                log('🎯 Testing console behavior...');
+                log('✅ Should show: "🔥 Connected to Firebase!"');
+                log('✅ Should set isDemoMode = false');
+                log('✅ Should show email in top right');
+                
+            } catch (error) {
+                log(`❌ Login failed: ${error.code}`);
+                log(`❌ Error message: ${error.message}`);
+                
+                if (error.code === 'auth/invalid-credential') {
+                    log('💡 Suggestion: Password might be incorrect');
+                } else if (error.code === 'auth/user-not-found') {
+                    log('💡 Suggestion: User account might not exist');
+                } else if (error.code === 'auth/too-many-requests') {
+                    log('💡 Suggestion: Too many failed attempts, wait a moment');
+                }
+            }
+        }
+        
+        function clearCacheAndReload() {
+            log('🧹 Clearing cache and reloading...');
+            
+            // Clear various caches
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                        log(`🗑️ Cleared cache: ${name}`);
+                    });
+                });
+            }
+            
+            // Clear localStorage
+            localStorage.clear();
+            log('🗑️ Cleared localStorage');
+            
+            // Clear sessionStorage
+            sessionStorage.clear();
+            log('🗑️ Cleared sessionStorage');
+            
+            // Force reload
+            setTimeout(() => {
+                log('🔄 Reloading page...');
+                location.reload(true);
+            }, 2000);
+        }
+
+        // Wait for Firebase to load
+        setTimeout(() => {
+            log('🔍 Starting diagnostic...');
+            checkFirebaseConfig();
+            
+            if (window.auth) {
+                // Check auth state
+                const { onAuthStateChanged } = window.firebaseServices;
+                onAuthStateChanged(window.auth, (user) => {
+                    if (user) {
+                        log(`✅ Already logged in: ${user.email}`);
+                    } else {
+                        log('ℹ️ No user currently logged in');
+                    }
+                });
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

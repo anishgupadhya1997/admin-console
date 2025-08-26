@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 10px 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        input { padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; width: 200px; }
+        #log { background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 20px; font-family: monospace; white-space: pre-wrap; height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Connection Test</h1>
+        <p>This page tests your Firebase connection and authentication setup.</p>
+        
+        <div id="firebaseStatus" class="status info">Testing Firebase connection...</div>
+        
+        <h3>Test Login</h3>
+        <div>
+            <input type="email" id="testEmail" placeholder="anishgu1997@gmail.com" value="anishgu1997@gmail.com">
+            <input type="password" id="testPassword" placeholder="Malathi#9611" value="Malathi#9611">
+            <button onclick="testLogin()">Test Login</button>
+            <button onclick="testDemo()">Test Demo Login</button>
+        </div>
+        
+        <div id="loginStatus" class="status" style="display: none;"></div>
+        
+        <h3>Debug Log</h3>
+        <div id="log"></div>
+        
+        <p><a href="index.html">← Back to Admin Console</a></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Firebase config (CORRECTED)
+        const firebaseConfig = {
+            apiKey: "AIzaSyA51AgJLb8c-PUQ71ewQz5DAEL25d2AOFo",
+            authDomain: "cyberaccend.firebaseapp.com",
+            projectId: "cyberaccend",
+            storageBucket: "cyberaccend.firebasestorage.app",
+            messagingSenderId: "110562767185",
+            appId: "1:110562767185:web:219eb88b0b911d34a3a370",
+            measurementId: "G-66KWD7KJ0L"
+        };
+
+        let app, auth, db;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+            element.style.display = 'block';
+        }
+
+        // Initialize Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            
+            log('✅ Firebase initialized successfully');
+            log(`📱 App: ${app.name}`);
+            log(`🔐 Auth: ${auth.app.name}`);
+            log(`📊 Firestore: ${db.app.name}`);
+            
+            updateStatus('firebaseStatus', '✅ Firebase connected successfully!', 'success');
+            
+            // Make functions global for HTML buttons
+            window.testLogin = async function() {
+                const email = document.getElementById('testEmail').value;
+                const password = document.getElementById('testPassword').value;
+                
+                log(`🔐 Testing login for: ${email}`);
+                
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    log(`✅ Login successful!`);
+                    log(`👤 User ID: ${user.uid}`);
+                    log(`📧 Email: ${user.email}`);
+                    log(`✅ Email verified: ${user.emailVerified}`);
+                    
+                    updateStatus('loginStatus', `✅ Login successful! Welcome ${user.email}`, 'success');
+                    
+                } catch (error) {
+                    log(`❌ Login failed: ${error.code}`);
+                    log(`❌ Error message: ${error.message}`);
+                    
+                    updateStatus('loginStatus', `❌ Login failed: ${error.message}`, 'error');
+                }
+            };
+            
+            window.testDemo = function() {
+                log('📝 Testing demo credentials...');
+                const email = 'admin@cyberlearn.com';
+                const password = 'admin123';
+                
+                if (email === 'admin@cyberlearn.com' && password === 'admin123') {
+                    log('✅ Demo credentials work');
+                    updateStatus('loginStatus', '✅ Demo mode works (local only)', 'success');
+                } else {
+                    log('❌ Demo credentials failed');
+                    updateStatus('loginStatus', '❌ Demo credentials failed', 'error');
+                }
+            };
+            
+        } catch (error) {
+            log(`❌ Firebase initialization failed: ${error.message}`);
+            updateStatus('firebaseStatus', `❌ Firebase connection failed: ${error.message}`, 'error');
+        }
+
+        // Additional diagnostics
+        log('🔍 Running diagnostics...');
+        log(`🌐 Current URL: ${window.location.href}`);
+        log(`🔗 Protocol: ${window.location.protocol}`);
+        log(`🏠 Host: ${window.location.host}`);
+        
+        // Check if running on Firebase Hosting
+        if (window.location.host.includes('.web.app') || window.location.host.includes('.firebaseapp.com')) {
+            log('✅ Running on Firebase Hosting');
+        } else {
+            log('⚠️ Running locally (not Firebase Hosting)');
+        }
+    </script>
+</body>
+</html>

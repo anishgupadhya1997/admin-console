@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberLearn Admin Console</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .cyber-gradient {
+            background: linear-gradient(135deg, #1A237E 0%, #00BCD4 100%);
+        }
+        .cyber-blue { color: #1A237E; }
+        .cyber-green { color: #4CAF50; }
+        .cyber-red { color: #F44336; }
+        .sidebar-active {
+            background-color: #1A237E;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
+                    <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+                </div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    CyberLearn Admin Console
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Sign in to access the admin panel
+                </p>
+            </div>
+            <form id="loginForm" class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Email address">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Password">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </span>
+                        Sign in
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <button type="button" id="demoModeBtn" class="text-sm text-blue-600 hover:text-blue-800">
+                        Continue in Demo Mode (No Firebase)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <!-- Navigation Bar -->
+        <nav class="cyber-gradient text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-shield-alt text-2xl"></i>
+                    <h1 class="text-xl font-bold">CyberLearn Admin Console</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userEmail" class="text-sm opacity-90"></span>
+                    <button id="logoutBtn" class="bg-white bg-opacity-20 px-4 py-2 rounded hover:bg-opacity-30 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg">
+            <div class="p-6">
+                <nav class="space-y-2">
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg transition sidebar-active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="quiz-questions">
+                        <i class="fas fa-question-circle mr-3"></i>Quiz Questions
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="interview-questions">
+                        <i class="fas fa-comments mr-3"></i>Interview Q&A
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="flashcards">
+                        <i class="fas fa-clone mr-3"></i>Flashcards
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="analytics">
+                        <i class="fas fa-chart-bar mr-3"></i>Analytics
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="user-management">
+                        <i class="fas fa-user-edit mr-3"></i>User Management
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition" data-section="settings">
+                        <i class="fas fa-cog mr-3"></i>Settings
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Dashboard</h2>
+                    <p class="text-gray-600">Welcome to the CyberLearn content management system</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-question-circle text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Questions</p>
+                                <p id="totalQuestions" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-check-circle text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Active Questions</p>
+                                <p id="activeQuestions" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-layer-group text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Categories</p>
+                                <p id="totalCategories" class="text-2xl font-semibold text-gray-900">10</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Active Users</p>
+                                <p id="activeUsers" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="recentActivity" class="space-y-4">
+                            <!-- Activity items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Section -->
+            <div id="quiz-questions-section" class="content-section hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Questions</h2>
+                        <p class="text-gray-600">Manage your cybersecurity quiz questions</p>
+                    </div>
+                    <button id="addQuestionBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+                        <i class="fas fa-plus mr-2"></i>Add Question
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select id="filterCategory" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">All Categories</option>
+                                <option value="NETWORK_SECURITY">Network Security</option>
+                                <option value="ETHICAL_HACKING">Ethical Hacking</option>
+                                <option value="CRYPTOGRAPHY">Cryptography</option>
+                                <option value="CLOUD_SECURITY">Cloud Security</option>
+                                <option value="MOBILE_SECURITY">Mobile Security</option>
+                                <option value="INCIDENT_RESPONSE">Incident Response</option>
+                                <option value="RISK_MANAGEMENT">Risk Management</option>
+                                <option value="COMPLIANCE_GOVERNANCE">Compliance & Governance</option>
+                                <option value="IOT_SECURITY">IoT Security</option>
+                                <option value="SECURITY_OPERATIONS">Security Operations</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
+                            <select id="filterDifficulty" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">All Difficulties</option>
+                                <option value="BEGINNER">Beginner</option>
+                                <option value="INTERMEDIATE">Intermediate</option>
+                                <option value="ADVANCED">Advanced</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="filterStatus" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">All Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="applyFilters" class="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">Questions List</h3>
+                        <div class="flex space-x-2">
+                            <button id="bulkImportBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                <i class="fas fa-upload mr-2"></i>Bulk Import
+                            </button>
+                            <button id="bulkExportBtn" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Question</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Difficulty</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="questionsTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Questions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-gray-700">
+                                Showing <span id="questionsStart">1</span> to <span id="questionsEnd">10</span> of <span id="questionsTotal">0</span> questions
+                            </p>
+                            <div class="flex space-x-2">
+                                <button id="prevPage" class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition">Previous</button>
+                                <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other sections (Interview Q&A, Flashcards, Analytics, Settings) -->
+            <div id="interview-questions-section" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Interview Q&A</h2>
+                <p class="text-gray-600">Coming soon...</p>
+            </div>
+
+            <div id="flashcards-section" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Flashcards</h2>
+                <p class="text-gray-600">Coming soon...</p>
+            </div>
+
+            <div id="analytics-section" class="content-section hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">User Analytics</h2>
+                        <p class="text-gray-600">Comprehensive user performance and engagement analytics</p>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex space-x-3">
+                        <button onclick="exportAnalyticsToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-download mr-2"></i>Export CSV
+                        </button>
+                        <button onclick="startAnalyticsRefresh()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Start Auto-Refresh
+                        </button>
+                        <button onclick="stopAnalyticsRefresh()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-stop mr-2"></i>Stop Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+                <!-- User Analytics Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Users</p>
+                                <p id="totalUsers" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-chart-line text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Active Users</p>
+                                <p id="activeUsers" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-trophy text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Avg Score</p>
+                                <p id="avgScore" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Avg Streak</p>
+                                <p id="avgStreak" class="text-2xl font-semibold text-gray-900">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Performers Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Top Quiz Performers -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-900">Top Quiz Performers</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="topQuizPerformers" class="space-y-3">
+                                <!-- Top performers will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Scoring Users -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-900">Top Scoring Users</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="topScoringUsers" class="space-y-3">
+                                <!-- Top scorers will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Path Analytics -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Learning Path Popularity -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-900">Learning Path Popularity</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="learningPathPopularity" class="space-y-3">
+                                <!-- Learning path data will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learning Path Completion Rates -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-900">Learning Path Completion Rates</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="learningPathCompletionRates" class="space-y-3">
+                                <!-- Completion rates will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                            <!-- Advanced Analytics Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Performance Trends Chart -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Performance Trends</h3>
+                    </div>
+                    <div class="p-6">
+                        <canvas id="performanceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Learning Path Distribution Chart -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Learning Path Distribution</h3>
+                    </div>
+                    <div class="p-6">
+                        <canvas id="learningPathChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Activity Timeline -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Recent User Activity</h3>
+                </div>
+                <div class="p-6">
+                    <div id="userActivityTimeline" class="space-y-4">
+                        <!-- User activity will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+                <!-- Category Performance -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Category Performance Analysis</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="categoryPerformance" class="space-y-3">
+                            <!-- Category performance will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Insights and Recommendations -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">User Insights & Recommendations</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <label for="userInsightsSelect" class="block text-sm font-medium text-gray-700 mb-2">Select User for Insights:</label>
+                            <select id="userInsightsSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="showUserInsights()">
+                                <option value="">Choose a user...</option>
+                            </select>
+                        </div>
+                        <div id="userInsightsDisplay" class="space-y-3">
+                            <!-- User insights will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-management-section" class="content-section hidden">
+                <div class="mb-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">User Management</h2>
+                            <p class="text-gray-600">Manage individual users, view detailed analytics, and track learning progress</p>
+                        </div>
+                        <div class="mt-4 sm:mt-0 flex space-x-3">
+                            <button onclick="showAddUserModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                                <i class="fas fa-user-plus mr-2"></i>Add User
+                            </button>
+                            <button onclick="refreshUserData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Search and Filters -->
+                <div class="bg-white rounded-lg shadow p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Search Users</label>
+                            <input type="text" id="userSearchInput" placeholder="Search by name or email..." 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="userStatusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">All Users</option>
+                                <option value="active">Active Only</option>
+                                <option value="inactive">Inactive Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Performance</label>
+                            <select id="userPerformanceFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">All Levels</option>
+                                <option value="high">High Performers (>80%)</option>
+                                <option value="medium">Medium Performers (60-80%)</option>
+                                <option value="low">Low Performers (<60%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Learning Path</label>
+                            <select id="userPathFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">All Paths</option>
+                                <option value="NETWORK_SECURITY">Network Security</option>
+                                <option value="CRYPTOGRAPHY">Cryptography</option>
+                                <option value="PENETRATION_TESTING">Penetration Testing</option>
+                                <option value="INCIDENT_RESPONSE">Incident Response</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Users List</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Settings</h2>
+                <p class="text-gray-600">Coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 id="userModalTitle" class="text-lg font-medium text-gray-900">Add New User</h3>
+                        <button onclick="hideUserModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="userForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="userEmail" required class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="user@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                                <input type="text" id="userDisplayName" required class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Avatar URL</label>
+                                <input type="url" id="userAvatarUrl" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/avatar.jpg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                <select id="userStatus" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Categories</label>
+                                <select id="userPreferredCategories" multiple class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="NETWORK_SECURITY">Network Security</option>
+                                    <option value="CRYPTOGRAPHY">Cryptography</option>
+                                    <option value="PENETRATION_TESTING">Penetration Testing</option>
+                                    <option value="INCIDENT_RESPONSE">Incident Response</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Preference</label>
+                                <select id="userDifficultyPreference" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="BEGINNER">Beginner</option>
+                                    <option value="INTERMEDIATE">Intermediate</option>
+                                    <option value="ADVANCED">Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end space-x-3">
+                            <button type="button" onclick="hideUserModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Save User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Upload Modal -->
+    <div id="csvUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">Upload CSV Questions</h3>
+                        <button id="closeCsvModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Select CSV File</h4>
+                        <input type="file" id="csvFileInput" accept=".csv" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <p class="text-sm text-gray-600 mt-2">Upload a CSV file with quiz questions. Download the template first if you need the format.</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <button id="csvTemplateBtn" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition">
+                            <i class="fas fa-download mr-2"></i>Download Template
+                        </button>
+                    </div>
+                    
+                    <div id="csvPreview" class="mb-6 hidden">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Preview (First 3 rows):</h4>
+                        <div class="bg-gray-50 p-3 rounded border max-h-40 overflow-y-auto">
+                            <pre id="csvPreviewContent" class="text-xs text-gray-800 whitespace-pre-wrap"></pre>
+                        </div>
+                    </div>
+                    
+                    <div id="csvValidation" class="mb-6 hidden">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Validation Results:</h4>
+                        <div id="csvValidationResults" class="p-3 rounded border">
+                            <!-- Validation results will be displayed here -->
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancelCsvUpload" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button id="processCsvUpload" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400" disabled>
+                            Upload Questions
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Question Modal -->
+    <div id="questionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Add New Question</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="questionForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Question</label>
+                                <textarea id="questionText" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter your question here..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <select id="questionCategory" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="NETWORK_SECURITY">Network Security</option>
+                                    <option value="ETHICAL_HACKING">Ethical Hacking</option>
+                                    <option value="CRYPTOGRAPHY">Cryptography</option>
+                                    <option value="CLOUD_SECURITY">Cloud Security</option>
+                                    <option value="MOBILE_SECURITY">Mobile Security</option>
+                                    <option value="INCIDENT_RESPONSE">Incident Response</option>
+                                    <option value="RISK_MANAGEMENT">Risk Management</option>
+                                    <option value="COMPLIANCE_GOVERNANCE">Compliance & Governance</option>
+                                    <option value="IOT_SECURITY">IoT Security</option>
+                                    <option value="SECURITY_OPERATIONS">Security Operations</option>
+                                    <option value="MALWARE_ANALYSIS">Malware Analysis</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
+                                <select id="questionDifficulty" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="BEGINNER">Beginner</option>
+                                    <option value="INTERMEDIATE">Intermediate</option>
+                                    <option value="ADVANCED">Advanced</option>
+                                </select>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-4">Answer Options</label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correctAnswer" value="0" id="option0Radio" class="text-blue-600">
+                                        <input type="text" id="option0" class="flex-1 border border-gray-300 rounded-md px-3 py-2" placeholder="Option A">
+                                        <label for="option0Radio" class="text-sm text-gray-600">Correct</label>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correctAnswer" value="1" id="option1Radio" class="text-blue-600">
+                                        <input type="text" id="option1" class="flex-1 border border-gray-300 rounded-md px-3 py-2" placeholder="Option B">
+                                        <label for="option1Radio" class="text-sm text-gray-600">Correct</label>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correctAnswer" value="2" id="option2Radio" class="text-blue-600">
+                                        <input type="text" id="option2" class="flex-1 border border-gray-300 rounded-md px-3 py-2" placeholder="Option C">
+                                        <label for="option2Radio" class="text-sm text-gray-600">Correct</label>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correctAnswer" value="3" id="option3Radio" class="text-blue-600">
+                                        <input type="text" id="option3" class="flex-1 border border-gray-300 rounded-md px-3 py-2" placeholder="Option D">
+                                        <label for="option3Radio" class="text-sm text-gray-600">Correct</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Explanation</label>
+                                <textarea id="questionExplanation" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Explain why the correct answer is right..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tags (comma separated)</label>
+                                <input type="text" id="questionTags" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="firewall, security, network">
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="checkbox" id="questionActive" checked class="text-blue-600 mr-2">
+                                <label for="questionActive" class="text-sm font-medium text-gray-700">Active Question</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end space-x-3">
+                            <button type="button" id="cancelQuestion" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Save Question</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <!-- Chart.js for advanced analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

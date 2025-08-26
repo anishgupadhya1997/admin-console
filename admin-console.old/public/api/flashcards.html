@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberLearn Flashcards API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .api-info { background: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .endpoint { background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .json-output { background: #f8f8f8; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>🗂️ CyberLearn Flashcards API</h1>
+    
+    <div class="api-info">
+        <h2>API Endpoints</h2>
+        <div class="endpoint">
+            <strong>📱 Flashcards Data:</strong> <code>/api/flashcards.html</code>
+        </div>
+        <div class="endpoint">
+            <strong>📊 Firestore Data:</strong> <code>https://cyberaccend.web.app/api_data/questions</code>
+        </div>
+        <div class="endpoint">
+            <strong>🔄 Real-time Updates:</strong> Data updates automatically when you modify flashcards in the admin console
+        </div>
+        <div class="endpoint">
+            <strong>📋 JSON Format:</strong> Pure JSON response for easy Android app integration
+        </div>
+    </div>
+
+    <h2>Current Flashcards Data</h2>
+    <div class="json-output">
+        <pre id="flashcardsData">Loading...</pre>
+    </div>
+
+    <h2>How to Use in Android App</h2>
+    <div class="api-info">
+        <h3>Option 1: Fetch from this page (Recommended)</h3>
+        <code>
+            val url = "https://cyberaccend.web.app/api/flashcards.html"<br>
+            // Parse the HTML and extract JSON from the pre tag<br>
+            // This gives you real-time flashcard data
+        </code>
+        
+        <h3>Option 2: Use Firestore directly</h3>
+        <code>
+            // Use Firebase SDK in your Android app<br>
+            db.collection("api_data").document("questions")<br>
+            .addSnapshotListener { snapshot, e -><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;val flashcardDecks = snapshot?.get("flashcard_decks") as? List<*><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;val flashcards = snapshot?.get("flashcards") as? List<*><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;// Update your app's flashcard data<br>
+            }
+        </code>
+        
+        <h3>Option 3: Direct JSON endpoint</h3>
+        <code>
+            // For static data (not real-time)<br>
+            val url = "https://cyberaccend.web.app/api/flashcards.json"
+        </code>
+    </div>
+
+    <h2>Data Structure</h2>
+    <div class="api-info">
+        <h3>Flashcard Deck Object:</h3>
+        <code>
+        {<br>
+        &nbsp;&nbsp;"id": "deck_1",<br>
+        &nbsp;&nbsp;"name": "Network Security Fundamentals",<br>
+        &nbsp;&nbsp;"description": "Essential concepts...",<br>
+        &nbsp;&nbsp;"category": "NETWORK_SECURITY",<br>
+        &nbsp;&nbsp;"difficulty": "BEGINNER",<br>
+        &nbsp;&nbsp;"color": "#2196F3",<br>
+        &nbsp;&nbsp;"tags": ["network", "firewall", "security"],<br>
+        &nbsp;&nbsp;"estimatedStudyTime": 30<br>
+        }
+        </code>
+        
+        <h3>Flashcard Object:</h3>
+        <code>
+        {<br>
+        &nbsp;&nbsp;"id": "card_1",<br>
+        &nbsp;&nbsp;"deckId": "deck_1",<br>
+        &nbsp;&nbsp;"front": "What is a firewall?",<br>
+        &nbsp;&nbsp;"back": "A network security device...",<br>
+        &nbsp;&nbsp;"explanation": "Firewalls act as a barrier...",<br>
+        &nbsp;&nbsp;"category": "NETWORK_SECURITY",<br>
+        &nbsp;&nbsp;"difficulty": "BEGINNER",<br>
+        &nbsp;&nbsp;"tags": ["firewall", "network", "security"]<br>
+        }
+        </code>
+    </div>
+
+    <script src="../flashcards.js"></script>
+    <script>
+        // Load the main app scripts to get access to flashcard data
+        function loadFlashcardsData() {
+            // Check if flashcard data is available from main app
+            if (window.getCurrentFlashcardData) {
+                const data = window.getCurrentFlashcardData();
+                document.getElementById('flashcardsData').textContent = JSON.stringify(data, null, 2);
+            } else {
+                // Fallback to sample data
+                const sampleData = {
+                    flashcard_decks: [
+                        {
+                            "id": "deck_1",
+                            "name": "Network Security Fundamentals",
+                            "description": "Essential concepts and terminology in network security",
+                            "category": "NETWORK_SECURITY",
+                            "difficulty": "BEGINNER",
+                            "color": "#2196F3",
+                            "tags": ["network", "firewall", "security", "basics"],
+                            "estimatedStudyTime": 30,
+                            "createdAt": new Date().toISOString(),
+                            "updatedAt": new Date().toISOString()
+                        }
+                    ],
+                    flashcards: [
+                        {
+                            "id": "card_1",
+                            "deckId": "deck_1",
+                            "front": "What is a firewall?",
+                            "back": "A network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules.",
+                            "explanation": "Firewalls act as a barrier between trusted internal networks and untrusted external networks, filtering traffic to prevent unauthorized access.",
+                            "category": "NETWORK_SECURITY",
+                            "difficulty": "BEGINNER",
+                            "tags": ["firewall", "network", "security", "traffic"],
+                            "createdAt": new Date().toISOString(),
+                            "updatedAt": new Date().toISOString()
+                        }
+                    ],
+                    last_updated: new Date().toISOString(),
+                    total_flashcard_decks: 1,
+                    total_flashcards: 1
+                };
+                
+                document.getElementById('flashcardsData').textContent = JSON.stringify(sampleData, null, 2);
+            }
+        }
+
+        // Try to load data immediately
+        loadFlashcardsData();
+        
+        // Also try after a delay in case scripts are still loading
+        setTimeout(loadFlashcardsData, 1000);
+        setTimeout(loadFlashcardsData, 3000);
+        
+        // Update every 5 seconds
+        setInterval(loadFlashcardsData, 5000);
+    </script>
+</body>
+</html>
